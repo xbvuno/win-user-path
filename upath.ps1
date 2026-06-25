@@ -120,6 +120,7 @@ switch ($Command) {
             exit 1
         }
 
+        $Value = [System.IO.Path]::GetFullPath($Value)
         $p = Normalize $Value
         $list = Get-CanonicalList $userPath
 
@@ -142,6 +143,7 @@ switch ($Command) {
             exit 1
         }
 
+        $Value = [System.IO.Path]::GetFullPath($Value)
         $p = Normalize $Value
         $list = Get-CanonicalList $userPath
 
