@@ -36,7 +36,7 @@ function Log-Error {
 # =========================
 function Show-Help {
     Write-Host ""
-    Write-Host "upath - easy user PATH manager" -ForegroundColor Cyan
+    Write-Host "upath 1.0.3 - easy user PATH manager" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "USAGE:"
     Write-Host "   upath add <path>        Add a directory to User PATH"
@@ -75,6 +75,18 @@ function Get-CanonicalList([string]$raw) {
     }
 
     return $result
+}
+
+function Resolve-InputPath([string]$p) {
+    if (-not $p) { return $null }
+
+    try {
+        return (Resolve-Path -LiteralPath $p -ErrorAction Stop).Path
+    }
+    catch {
+        # fallback per path non esistenti (es: aggiunta a PATH)
+        return [System.IO.Path]::GetFullPath((Join-Path $PWD $p))
+    }
 }
 
 function Load-UserPath {
@@ -120,7 +132,7 @@ switch ($Command) {
             exit 1
         }
 
-        $Value = [System.IO.Path]::GetFullPath($Value)
+        $Value = Resolve-InputPath $Value
         $p = Normalize $Value
         $list = Get-CanonicalList $userPath
 
@@ -143,7 +155,7 @@ switch ($Command) {
             exit 1
         }
 
-        $Value = [System.IO.Path]::GetFullPath($Value)
+        $Value = Resolve-InputPath $Value
         $p = Normalize $Value
         $list = Get-CanonicalList $userPath
 
